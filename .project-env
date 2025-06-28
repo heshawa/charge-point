@@ -1,0 +1,5 @@
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
+#Run following command in terminal to enable java 17 for this project only
+#:~$ source .project-env
