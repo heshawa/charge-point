@@ -8,7 +8,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
-@RestControllerAdvice
 class HelloExceptionHandler {
     private val log = LoggerFactory.getLogger(HelloExceptionHandler::class.java)
 

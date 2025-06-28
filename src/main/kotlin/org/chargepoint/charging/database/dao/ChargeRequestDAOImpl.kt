@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import org.chargepoint.charging.database.entity.ChargeRequest
 import org.chargepoint.charging.database.repository.ChargeRequestRepository
 import org.chargepoint.charging.v1.api.dto.ChargingRequest
+import org.chargepoint.charging.v1.api.dto.RequestStatus
 import org.chargepoint.charging.v1.api.dto.ServiceRequestContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +13,14 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRepository) : ChargeRequestDAO {
     override fun saveRequestDataOnError(chargingRequest: ChargingRequest) {
-        TODO("Not yet implemented")
+        var requestData : ChargeRequest? = ChargeRequest()
+        
+        requestData?.clientUUID = chargingRequest.driverId
+        requestData?.stationUUID = chargingRequest.requestedStationId
+        requestData?.callbackUrl = chargingRequest.callbackUrl
+        requestData?.status = RequestStatus.FAILED.statusId
+        
+        requestData?.let { chargeRequestRepository.save(it) }
     }
 
     override fun saveRequestData(serviceRequestContext: ServiceRequestContext) {
@@ -23,6 +31,7 @@ class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRep
         requestData?.clientUUID = serviceRequestContext.clientUUID.toString()
         requestData?.status = serviceRequestContext.status.statusId
         requestData?.stationUUID = serviceRequestContext.stationUUID.toString()
+        requestData?.callbackUrl = serviceRequestContext.callbackUrl
         requestData?.lastModifiedTime = serviceRequestContext.lastModifiedTime?.let { Instant.parse(it) }
 
         requestData?.let { chargeRequestRepository.save(it) }

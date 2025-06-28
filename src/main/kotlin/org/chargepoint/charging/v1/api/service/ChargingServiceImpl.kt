@@ -2,6 +2,7 @@ package org.chargepoint.charging.v1.api.service
 
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.chargepoint.charging.database.dao.ChargeRequestDAO
+import org.chargepoint.charging.v1.api.dto.ChargingRequest
 import org.chargepoint.charging.v1.api.dto.ServiceRequestContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,5 +25,9 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
     override fun persistRequestInDB(request: ServiceRequestContext) {
         chargeRequestDAO.saveRequestData(request)
         log.info("Request data saved to database successfully. Request identifier: {}",request.requestCorrelationId)
+    }
+
+    override fun persistErrorRequestInDB(request: ChargingRequest) {
+        chargeRequestDAO.saveRequestDataOnError(request)
     }
 }

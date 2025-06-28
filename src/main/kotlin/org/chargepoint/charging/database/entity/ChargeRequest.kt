@@ -29,6 +29,9 @@ class ChargeRequest {
     @Column(name = "station_uuid")
     var stationUUID : String? = null
     
+    @Column(name = "callback_url")
+    var callbackUrl : String? = null
+    
     @Column(name = "last_modified")
     var lastModifiedTime: Instant? = null
 }
