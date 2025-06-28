@@ -10,4 +10,5 @@ class ServiceRequestContext( val clientUUID:UUID,
     var lastRetryAttempt:Int = 0
     lateinit var requestCorrelationId:UUID
     var lastError: Exception? = null
+    var lastModifiedTime:String? = null
 }

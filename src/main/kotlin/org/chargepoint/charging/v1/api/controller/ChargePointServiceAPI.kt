@@ -1,7 +1,9 @@
 package org.chargepoint.charging.v1.api.controller
 
+import kotlinx.datetime.Clock
 import org.chargepoint.charging.v1.api.dto.ChargingRequest
 import org.chargepoint.charging.v1.api.dto.ChargingResponse
+import org.chargepoint.charging.v1.api.dto.RequestStatus
 import org.chargepoint.charging.v1.api.dto.ServiceRequestContext
 import org.chargepoint.charging.v1.api.service.ChargingService
 import org.springframework.http.ResponseEntity
@@ -27,7 +29,13 @@ class ChargePointServiceAPI(
         )
         chargingRequest.requestCorrelationId = UUID.randomUUID()
         
+        chargingService.persistRequestInDB(chargingRequest)
+        
         chargingService.publishServiceRequestToKafka(chargingRequest)
+        
+        chargingRequest.status = RequestStatus.PUBLISHED
+        chargingRequest.lastModifiedTime = Clock.System.now().toString()
+        chargingService.persistRequestInDB(chargingRequest)
         
         return ResponseEntity.ok().body(ChargingResponse())
     }
