@@ -35,7 +35,7 @@ class ChargePointServiceAPI(
             )
         }catch (exception:IllegalArgumentException){
             chargingService.persistErrorRequestInDB(request)
-            throw ServiceRequestException(exception?.message?:"Unexpected error occurred",exception)
+            throw ServiceRequestException(exception.message?:"Unexpected error occurred",exception)
         }
         chargingRequest.requestCorrelationId = UUID.randomUUID()
         

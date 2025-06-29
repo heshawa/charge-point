@@ -30,7 +30,7 @@ class ApiExceptionHandler(private val chargingService: ChargingService) {
     @ExceptionHandler(ServiceRequestException::class)
     fun handleServiceRequestException(exception: ServiceRequestException):ResponseEntity<ChargingResponse>{
         log.error("Invalid argument: {}",exception.message,exception)
-        return ResponseEntity.badRequest().body(ChargingResponse(false, exception?.message?:"Unexpected error"))
+        return ResponseEntity.badRequest().body(ChargingResponse(false, exception.message?:"Unexpected error"))
     }
 
 
