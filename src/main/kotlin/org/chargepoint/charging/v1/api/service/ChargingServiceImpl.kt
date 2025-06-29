@@ -27,21 +27,11 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
     
     val log : Logger = LoggerFactory.getLogger(ChargingServiceImpl::class.java)
 
-    override fun publishServiceRequestToKafka(request:ServiceRequestContext) {
-        kafkaTemplate.send(requestPublishTopic,request.requestCorrelationId.toString(),request)
-        log.info("Request details published successfully. request identifier: {}",request.requestCorrelationId)
-    }
-
     override fun publishServiceRequestToKafkaAsync(request:ServiceRequestContext) : Job {
         return coroutineScope.launch {
             kafkaTemplate.send(requestPublishTopic,request.requestCorrelationId.toString(),request)
             log.info("Request details published successfully. request identifier: {}",request.requestCorrelationId)
         }
-    }
-
-    override fun persistRequestInDB(request: ServiceRequestContext) {
-        chargeRequestDAO.saveRequestData(request)
-        log.info("Request data saved to database successfully. Request identifier: {}",request.requestCorrelationId)
     }
 
     override fun persistRequestInDBAsync(request: ServiceRequestContext,  error : String) : Job {
@@ -53,12 +43,6 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
 
     override fun persistErrorRequestInDB(request: ChargingRequest,error:String) {
         chargeRequestDAO.saveRequestDataOnError(request, error)
-    }
-
-    override fun persistErrorRequestInDBAsync(request: ChargingRequest,error:String) : Job {
-        return coroutineScope.launch {
-            chargeRequestDAO.saveRequestDataOnError(request, error)
-        }
     }
 
     override fun createEnrichedServiceRequest(request: ChargingRequest) : ServiceRequestContext{
