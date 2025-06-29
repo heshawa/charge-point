@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.chargepoint.charging.v1.api.dto.RequestStatus
-import java.util.*
 
 @Entity
 @Table(name = "charge_request")
@@ -34,4 +33,7 @@ class ChargeRequest {
     
     @Column(name = "last_modified")
     var lastModifiedTime: Instant? = null
+    
+    @Column(name = "remarks")
+    var remarks: String? = null
 }

@@ -24,19 +24,20 @@ class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRep
                            private val electricVehicleRepository: ElectricVehicleRepository, 
                            private val evClientRepository: ClientRepository
 ) : ChargeRequestDAO {
-    override fun saveRequestDataOnError(chargingRequest: ChargingRequest) {
-        var requestData : ChargeRequest? = ChargeRequest()
+    override fun saveRequestDataOnError(chargingRequest: ChargingRequest, error:String) {
+        val requestData : ChargeRequest? = ChargeRequest()
         
         requestData?.clientUUID = chargingRequest.driverId
         requestData?.stationUUID = chargingRequest.requestedStationId
         requestData?.callbackUrl = chargingRequest.callbackUrl
         requestData?.status = RequestStatus.FAILED.statusId
-        
+
+        error.takeIf { it.isNotEmpty() }?.let { requestData?.remarks = error }
         requestData?.let { chargeRequestRepository.save(it) }
     }
 
-    override fun saveRequestData(serviceRequestContext: ServiceRequestContext) {
-        var requestData : ChargeRequest? = ChargeRequest()
+    override fun saveRequestData(serviceRequestContext: ServiceRequestContext, error: String) {
+        val requestData : ChargeRequest? = ChargeRequest()
         
         requestData?.correlationId = serviceRequestContext.requestCorrelationId.toString()
         requestData?.requestedTime = Instant.parse(serviceRequestContext.timeStamp)
@@ -46,15 +47,17 @@ class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRep
         requestData?.callbackUrl = serviceRequestContext.callbackUrl
         requestData?.lastModifiedTime = serviceRequestContext.lastModifiedTime?.let { Instant.parse(it) }
 
+        error.takeIf { it.isNotEmpty() }?.let { requestData?.remarks = it }
+
         requestData?.let { chargeRequestRepository.save(it) }
     }
 
     override fun insertSystemData() {
 
-        var chargingStation1 = ChargingStation()
-        var chargingStation2 = ChargingStation()
-        var chargingStation3 = ChargingStation()
-        var chargingStation4 = ChargingStation()
+        val chargingStation1 = ChargingStation()
+        val chargingStation2 = ChargingStation()
+        val chargingStation3 = ChargingStation()
+        val chargingStation4 = ChargingStation()
 
         chargingStation1.stationLocation = "Radstadt"
         chargingStation1.contactNumber = "+1 33 55552 2322"
@@ -72,10 +75,10 @@ class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRep
         chargingStation4.contactNumber = "+1 33 22334 6557"
         chargingStation4.stationType = 0
 
-        var evClient1 = EvClient()
-        var evClient2 = EvClient()
-        var evClient3 = EvClient()
-        var evClient4 = EvClient()
+        val evClient1 = EvClient()
+        val evClient2 = EvClient()
+        val evClient3 = EvClient()
+        val evClient4 = EvClient()
 
         evClient1.firstName = "Heshawa"
         evClient1.lastName = "De Silva"
@@ -101,10 +104,10 @@ class ChargeRequestDAOImpl(private val chargeRequestRepository: ChargeRequestRep
         )
         val savedClients = evClientRepository.saveAll(mutableListOf(evClient1, evClient2, evClient3, evClient4))
 
-        var electricVehicle1 = ElectricVehicle()
-        var electricVehicle2 = ElectricVehicle()
-        var electricVehicle3 = ElectricVehicle()
-        var electricVehicle4 = ElectricVehicle()
+        val electricVehicle1 = ElectricVehicle()
+        val electricVehicle2 = ElectricVehicle()
+        val electricVehicle3 = ElectricVehicle()
+        val electricVehicle4 = ElectricVehicle()
 
         electricVehicle1.chassisNumber = "2112-CV23232-22-XX"
         electricVehicle1.brand = "Toyota"

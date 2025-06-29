@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class ApiExceptionHandler(private val chargingService: ChargingService) {
+class ApiExceptionHandler(private val chargingService: ChargingService, 
+                          private val requestAuditContext: RequestAuditContext) {
     
     var log : Logger = LoggerFactory.getLogger(ApiExceptionHandler::class.java)
     @ExceptionHandler(ConstraintViolationException::class)
@@ -28,7 +29,13 @@ class ApiExceptionHandler(private val chargingService: ChargingService) {
     }
 
     @ExceptionHandler(ServiceRequestException::class)
-    fun handleServiceRequestException(exception: ServiceRequestException):ResponseEntity<ChargingResponse>{
+    fun handleServiceRequestException(exception: ServiceRequestException
+    ):ResponseEntity<ChargingResponse>{
+        val requestBody = requestAuditContext.chargingRequest
+        if(requestBody != null){
+            chargingService.persistErrorRequestInDB(requestBody, "Error: ${ exception.message ?: "Unexpected error" }")
+        }
+
         log.error("Invalid argument: {}",exception.message,exception)
         return ResponseEntity.badRequest().body(ChargingResponse(false, exception.message?:"Unexpected error"))
     }
