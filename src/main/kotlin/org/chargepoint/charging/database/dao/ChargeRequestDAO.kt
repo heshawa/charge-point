@@ -7,4 +7,6 @@ interface ChargeRequestDAO {
     fun saveRequestDataOnError(chargingRequest: ChargingRequest)
     
     fun saveRequestData(serviceRequestContext: ServiceRequestContext)
+    
+    fun insertSystemData()    
 }

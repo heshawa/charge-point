@@ -30,4 +30,9 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
     override fun persistErrorRequestInDB(request: ChargingRequest) {
         chargeRequestDAO.saveRequestDataOnError(request)
     }
+
+    //Function for dev testing purposes
+    override fun insertSystemData() {
+        chargeRequestDAO.insertSystemData()
+    }
 }

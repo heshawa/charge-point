@@ -10,4 +10,7 @@ interface ChargingService{
     
     fun persistErrorRequestInDB(request: ChargingRequest)
     
+    //Function for dev testing purposes
+    fun insertSystemData()
+    
 }
