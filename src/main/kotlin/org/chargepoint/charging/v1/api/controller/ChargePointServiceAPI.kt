@@ -32,6 +32,7 @@ class ChargePointServiceAPI(
     @PostMapping("/charge")
     fun vehicleChargeRequest(@RequestBody @Valid request : ChargingRequest):ResponseEntity<ChargingResponse>{
         try {
+            //Add request to record request body on failure
             requestAuditContext.chargingRequest = request
         } catch (exception : IllegalStateException){
             log.warn("Request audit context is not available. " +
@@ -40,6 +41,7 @@ class ChargePointServiceAPI(
 
         val chargingRequest = chargingService.createEnrichedServiceRequest(request)
 
+        //Async process after enrichment complete
         chargingService.persistRequestInDBAsync(chargingRequest)
         val job = chargingService.publishServiceRequestToKafkaAsync(chargingRequest)
 
