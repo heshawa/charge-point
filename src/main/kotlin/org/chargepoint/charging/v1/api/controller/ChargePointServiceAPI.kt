@@ -42,8 +42,13 @@ class ChargePointServiceAPI(
         val chargingRequest = chargingService.createEnrichedServiceRequest(request)
 
         //Async process after enrichment complete
-        chargingService.persistRequestInDBAsync(chargingRequest)
-        val job = chargingService.publishServiceRequestToKafkaAsync(chargingRequest)
+        coroutineScope.launch {
+            chargingService.persistRequestInDBAsync(chargingRequest)
+        }
+        
+        val job = coroutineScope.launch {
+            chargingService.publishServiceRequestToKafkaAsync(chargingRequest)
+        }
 
         coroutineScope.launch {
             try {

@@ -27,14 +27,14 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
     
     val log : Logger = LoggerFactory.getLogger(ChargingServiceImpl::class.java)
 
-    override fun publishServiceRequestToKafkaAsync(request:ServiceRequestContext) : Job {
+    override suspend fun publishServiceRequestToKafkaAsync(request:ServiceRequestContext) : Job {
         return coroutineScope.launch {
             kafkaTemplate.send(requestPublishTopic,request.requestCorrelationId.toString(),request)
             log.info("Request details published successfully. request identifier: {}",request.requestCorrelationId)
         }
     }
 
-    override fun persistRequestInDBAsync(request: ServiceRequestContext,  error : String) : Job {
+    override suspend fun persistRequestInDBAsync(request: ServiceRequestContext,  error : String) : Job {
         return coroutineScope.launch {
             chargeRequestDAO.saveRequestData(request)
             log.info("Request data saved to database successfully. Request identifier: {}",request.requestCorrelationId)
