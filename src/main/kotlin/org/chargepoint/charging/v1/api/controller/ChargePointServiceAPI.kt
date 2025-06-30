@@ -3,6 +3,7 @@ package org.chargepoint.charging.v1.api.controller
 import jakarta.validation.Valid
 import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
+import org.chargepoint.charging.v1.api.dto.CallbackRequestBody
 import org.chargepoint.charging.v1.api.dto.ChargingRequest
 import org.chargepoint.charging.v1.api.dto.ChargingResponse
 import org.chargepoint.charging.v1.api.dto.RequestStatus
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.lang.IllegalStateException
+import kotlin.random.Random
 
 @RestController
 @RequestMapping("/chargepoint/v1/api")
@@ -64,6 +66,11 @@ class ChargePointServiceAPI(
         return ResponseEntity.ok().body(ChargingResponse())
     }
     
+    @PostMapping("/callback")
+    fun processRequestCompletion(@RequestBody request : CallbackRequestBody) : ResponseEntity<Map<String,Boolean>>{
+        return ResponseEntity.ok(mapOf("success" to Random.nextBoolean()))
+    }
+
     //API for dev testing. Create stations, clients and vehicles
     @GetMapping("/populateData")
     fun populateData(){
