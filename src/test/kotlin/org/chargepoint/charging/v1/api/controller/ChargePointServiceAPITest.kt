@@ -3,7 +3,9 @@ package org.chargepoint.charging.v1.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.*
+import org.chargepoint.charging.v1.api.dto.CallbackRequestBody
 import org.chargepoint.charging.v1.api.dto.ChargingRequest
+import org.chargepoint.charging.v1.api.dto.RequestStatus
 import org.chargepoint.charging.v1.api.dto.ServiceRequestContext
 import org.chargepoint.charging.v1.api.exception.RequestAuditContext
 import org.chargepoint.charging.v1.api.service.ChargingService
@@ -30,13 +32,14 @@ class ChargePointServiceAPITest {
     private lateinit var requestAuditContext: RequestAuditContext
     
     private val objectMapper = ObjectMapper()
+        .registerModule(com.fasterxml.jackson.module.kotlin.kotlinModule())
 
     private val driverId = UUID.randomUUID()
     private val stationId = UUID.randomUUID()
     private val callbackUrl = "http://localhost:8080/chargepoint/v1/api/callback"
-    
-    private val chargingRequest = ChargingRequest(driverId.toString(),stationId.toString(),callbackUrl)
-    
+
+    private val invalidDriverId = "123456"
+
     private val enrichedRequest = ServiceRequestContext(driverId,stationId,callbackUrl)
 
     @BeforeEach
@@ -53,7 +56,10 @@ class ChargePointServiceAPITest {
     }
     
     @Test
-    fun `should return 200 OK when vehicleChargeRequestIsSuccessful`(){
+    fun `should return 200 OK when vehicleChargeRequest Is Successful`(){
+
+        val chargingRequest = ChargingRequest(driverId.toString(),stationId.toString(),callbackUrl)
+
         mockMvc.post("/chargepoint/v1/api/charge"){
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(chargingRequest)
@@ -65,5 +71,21 @@ class ChargePointServiceAPITest {
         verify { chargingService.createEnrichedServiceRequest(chargingRequest) }
         coVerify { chargingService.persistRequestInDBAsync(enrichedRequest) }
         coVerify { chargingService.publishServiceRequestToKafkaAsync(enrichedRequest) }
+    }
+    
+    @Test
+    fun `should return 200 ok when processRequestCompletion is successful`(){
+
+        val callbackRequest = CallbackRequestBody(driverId.toString(),stationId.toString(),RequestStatus.PROCESSED.name)
+
+        mockMvc.post("/chargepoint/v1/api/callback"){
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(callbackRequest)
+        }.andExpect { 
+            status { isOk() }
+            content { MediaType.APPLICATION_JSON }
+            jsonPath("$.success"){ true }
+        }
+
     }
 }
