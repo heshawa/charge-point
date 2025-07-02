@@ -34,10 +34,15 @@ class ChargingServiceImpl(private val kafkaTemplate: KafkaTemplate<String,Servic
         }
     }
 
-    override suspend fun persistRequestInDBAsync(request: ServiceRequestContext,  error : String) : Job {
+    override suspend fun persistRequestInDBAsync(request: ServiceRequestContext, error: Exception?): Job {
         return coroutineScope.launch {
-            chargeRequestDAO.saveRequestData(request)
-            log.info("Request data saved to database successfully. Request identifier: {}",request.requestCorrelationId)
+            if(error != null){
+                chargeRequestDAO.saveRequestData(request,error.message?:"Unknown error")
+                log.warn("Request data saved to database successfully with error. Request identifier: {}",request.requestCorrelationId)
+            }else{
+                chargeRequestDAO.saveRequestData(request)
+                log.info("Request data saved to database successfully. Request identifier: {}",request.requestCorrelationId)
+            }
         }
     }
 
