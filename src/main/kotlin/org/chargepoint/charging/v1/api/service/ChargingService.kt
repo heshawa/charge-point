@@ -7,7 +7,7 @@ import org.chargepoint.charging.v1.api.dto.ServiceRequestContext
 interface ChargingService{
     suspend fun publishServiceRequestToKafkaAsync(request:ServiceRequestContext) : Job
     
-    suspend fun persistRequestInDBAsync(request: ServiceRequestContext, error : String = "") : Job
+    suspend fun persistRequestInDBAsync(request: ServiceRequestContext, error : Exception? = null) : Job
 
     fun persistErrorRequestInDB(request: ChargingRequest, error:String = "")
 
