@@ -13,6 +13,9 @@ A Spring Boot microservice written in Kotlin that handles **electric vehicle (EV
 
 ---
 
+## Design diagram
+![System Architecture](charge-point-high-level-diagram.jpg)
+
 ## 🛠️ Tech Stack
 
 | Layer         | Technology                    |
