@@ -13,13 +13,4 @@ class ChargingStation {
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "station_id", nullable = false)
     var stationId: UUID? = null
-    
-    @Column(name = "address", nullable = false)
-    var stationLocation: String? = null
-    
-    @Column(name = "contact_number")
-    var contactNumber : String? = null
-    
-    @Column(name = "station_type", nullable = false)
-    var stationType : Int? = null //OWN=0,REGULAR=1,PREMIUM=2
 }

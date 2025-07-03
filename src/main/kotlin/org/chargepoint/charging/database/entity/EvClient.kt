@@ -16,21 +16,4 @@ class EvClient {
     
     @Column(name = "national_id", nullable = false)
     var nationalId: String? = null
-    
-    @Column(name = "first_name")
-    var firstName: String? = null
-
-    @Column(name = "last_name")
-    var lastName: String? = null
-
-    @Column(name = "contact_number")
-    var contactNUmber: String? = null
-    
-    @OneToMany(
-        mappedBy = "customerVehicle",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = [CascadeType.ALL]
-    )
-    var ownedVehicle: MutableList<ElectricVehicle> = mutableListOf()
 }
