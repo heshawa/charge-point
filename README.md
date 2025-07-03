@@ -10,10 +10,11 @@ A Spring Boot microservice written in Kotlin that handles **electric vehicle (EV
 - 🧠 Enrich requests with system metadata  
 - 🗃️ Persist requests in the database using Spring Data JPA  
 - 🚀 Publish enriched requests to Kafka asynchronously  
-- 🔁 Receive status updates via callback  
-- 🧪 Dev utility to pre-load system data  
 
 ---
+
+## Design diagram
+![System Architecture](charge-point-high-level-diagram.jpg)
 
 ## 🛠️ Tech Stack
 
@@ -36,9 +37,8 @@ A Spring Boot microservice written in Kotlin that handles **electric vehicle (EV
 ### ✅ Prerequisites
 
 - JDK 17+
-- Kafka (optional, for full functionality)
+- Kafka
 - Gradle
-- Docker (optional for local Kafka)
 
 ### 🧪 Clone & Build
 
@@ -47,6 +47,26 @@ git clone https://github.com/heshawa/charge-point.git
 cd charge-point
 ./gradlew clean build
 ```
+
+### ▶️ Running Tests
+
+Execute following commands to execute tests
+```bash
+./gradlew clean build
+./gradlew test
+```
+
+open `build/reports/tests/test/index.html` in your browser to view results
+
+Execute following commands to execute test and view line coverage
+
+```bash
+./gradlew clean build
+./gradlew test jacocoTestReport
+```
+
+open `build/reports/jacoco/test/html/index.html` in your browser to view results
+
 
 ### ▶️ Run the App
 
@@ -198,9 +218,3 @@ curl -X POST http://localhost:8080/chargepoint/v1/api/charge   -H "Content-Type:
 ## 👨‍💻 Maintainer
 
 Developed and maintained by [@heshawa](https://github.com/heshawa)
-
----
-
-## 📄 License
-
-MIT License. See [LICENSE](./LICENSE) for more.
